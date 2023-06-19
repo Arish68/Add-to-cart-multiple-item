@@ -1,0 +1,41 @@
+1. Order reorder by store api
+2. 6 dishes left for first discount (WHole or specific)
+3. Variant Based fish icon -----> Done
+4. Tags based filter and variant based grams 
+
+
+ {% for kit_product in kit_products %}
+      <div class="product">
+        <a class="product-link" data-varient_id="{{ kit_product.selected_or_first_available_variant.id }}" href="{{ kit_product.url }}">
+          <img src="{{ kit_product.featured_image | img_url: '100x100', crop: 'center' }}" alt="{{ kit_product.name }}">
+        </a>
+      </div>
+    {% endfor %}
+
+
+
+
+ $(".kit .product").each( function(){
+                       var product_kits = $(this).find('.product-link').attr('data-varient_id');
+                         products.items.push({id: product_kits, quantity:1})
+                   });
+  Shopify.addToCart(products);
+  Shopify.addToCart = function(items) {
+  	fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(items)
+      })
+      .then(function(result){
+            fetch(`${window.themeVariables.routes.cartUrl}.js`).then(async (responset2) => {
+              const cartContentt = await responset2.json();
+              document.querySelector(".header__cart-count ").innerHTML= cartContentt.item_count;
+              document.documentElement.dispatchEvent(new CustomEvent("cart:refresh"));
+        });
+        })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
